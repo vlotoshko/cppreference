@@ -1,9 +1,12 @@
 #include <iostream>
 
-using namespace std;
+#include "initialization.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
-    cout << "Hello World!" << endl;
-    return 0;
+  std::cout << "Hello World!" << std::endl;
+
+  initalization(argc, argv);
+
+  return 0;
 }
