@@ -29,6 +29,12 @@ void constinit() {
 // --- zero initialization
 
 
+void zeroinit () {
+  int a1;
+  int a2();
+  static int a3;
+  std::cout << "a1 = " << a1 << "; a2 = " << a2 << "; a3 = " << a3 << std::endl;
+}
 
 
 void initalization(int argc, char **argv)
@@ -36,4 +42,5 @@ void initalization(int argc, char **argv)
   std::cout << "Initialization func" << std::endl;
 
   constinit();
+  zeroinit();
 }
