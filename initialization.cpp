@@ -3,6 +3,42 @@
 
 #include "initialization.h"
 
+
+// --- default initialization
+
+class DefInit {
+public:
+  DefInit() {}
+  DefInit(int a) : memb(a) {}
+  int memb;
+};
+
+struct T1 {
+  int mem;
+};
+
+struct T2
+{
+    int mem;
+    T2() { } // "mem" is not in the initializer list
+};
+
+void defaultinit() {
+  DefInit d1;
+  DefInit d2(3);
+  int a;
+  static int b;
+  std::cout << "DefInit.memb = " << d1.memb << std::endl;
+  std::cout << "DefInit.memb = " << d2.memb << std::endl;
+  std::cout << "a = " << a << std::endl;
+  std::cout << "b = " << b << std::endl;
+  T1 t1;
+  const T2 t2;
+  std::cout << "t1.mem = " << t1.mem << std::endl;
+  std::cout << "t2.mem = " << t2.mem << std::endl;
+}
+
+
 // --- constant initialization
 
 struct S {
@@ -22,25 +58,33 @@ constexpr const int& return50() {
 void constinit() {
   std::cout << "d = " << d << '\n';
   std::array<int, S::c> a1; // OK: S::c is a constant expression
-//  std::array<int, d> a2;    // error: d is not a constant expression
+//  std::array<int, d> a2;  // error: d is not a constant expression
 }
 
 
 // --- zero initialization
 
-
 void zeroinit () {
   int a1;
   int a2();
   static int a3;
-  std::cout << "a1 = " << a1 << "; a2 = " << a2 << "; a3 = " << a3 << std::endl;
+}
+
+
+// --- value initalization
+
+void valueinit () {
+  std::cout << "int() = " << int() << std::endl;
+  std::cout << "int{} = " << int{} << std::endl;
 }
 
 
 void initalization(int argc, char **argv)
 {
-  std::cout << "Initialization func" << std::endl;
+  std::cout << "Initialization funcs" << std::endl;
 
+  defaultinit();
   constinit();
   zeroinit();
+  valueinit ();
 }
