@@ -73,9 +73,62 @@ void zeroinit () {
 
 // --- value initalization
 
+struct S1 {
+  int i;
+};
+
+struct S2 {
+  int i;
+  S2(){}
+};
+
+
 void valueinit () {
   std::cout << "int() = " << int() << std::endl;
   std::cout << "int{} = " << int{} << std::endl;
+  std::cout << "S1().i = " << S1().i << std::endl;
+  std::cout << "S1().i = " << S2().i << std::endl;
+}
+
+// --- list initialization
+
+template <typename T>
+T passT (T t) {
+  return t;
+}
+
+struct S3 {
+  int mem;
+  std::string str{"default"};
+  S3(int a, std::string s) : mem(a), str{s} {}
+};
+
+void listinit() {
+  std::initializer_list<int> li = {1,2,3,4,5};
+  li = passT<std::initializer_list<int>>({3,4,5});
+  for (auto x: li)
+    std::cout << "x = " << x << std::endl;
+
+  S3 s3 = passT<S3>({3, "sdafa"});
+  std::cout << "s3.mem = " << s3.mem << std::endl;
+  std::cout << "s3.str = " << s3.str << std::endl;
+  std::cout << "s3.str = " << S3({1, "test"}).str << std::endl;
+  int bad{12.0};
+  unsigned char ch{-12};
+}
+
+
+// --- aggregate initialization
+
+struct AG {
+  int mem1;
+  int mem2;
+};
+
+void aggreinit() {
+  AG ag = {1, 2.0};
+  int a1[]{1, 2.0};
+  int a2[] = {1, 2.0};
 }
 
 
@@ -87,4 +140,5 @@ void initalization(int argc, char **argv)
   constinit();
   zeroinit();
   valueinit ();
+  listinit();
 }
