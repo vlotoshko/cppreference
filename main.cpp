@@ -121,6 +121,34 @@ constexpr std::size_t arraySize(T (&) [N]) {
 
 void someFunc(double, int) {}
 
+// difference in auto and template type dedution - std::initializer_list
+
+template<typename T>
+void ilFunc(std::initializer_list<T> param);
+
+
+// auto as trailing return type
+template <typename Container, typename Index>
+auto autoTRTFunc(Container& c, Index i) -> decltype(c[i]) {
+    return c[i];
+}
+
+// auto uses template type deduction
+template <typename Container, typename Index>
+auto autoTTDlFunc(Container& c, Index i) {
+    return c[i];
+}
+
+// decltype(auto) means type should be deducted but using decltype rules
+//template <typename Container, typename Index>
+//decltype(auto)
+//retDeclFunc(Container& c, Index i) {
+//    return c[i];
+//}
+
+
+
+
 void testTypeDeduction() {
     int x = 27;
     const int cx = x;
@@ -150,6 +178,15 @@ void testTypeDeduction() {
 //    errFunc3(someFunc);
 
     std::cout << arraySize(name) << std::endl;
+
+//    auto a = {27};
+//    errFunc3(a); // std::initalizer_list<int>
+//    ilFunc({1,2,3});
+
+    auto a1 = rx;
+    errFunc1(a1);
+//    decltype(auto) a2 = rx;
+
 }
 
 
@@ -157,11 +194,10 @@ void testTypeDeduction() {
 int main(int argc, char **argv)
 {
     std::cout << "Hello World!" << std::endl;
+//    initalization(argc, argv);
+//    testNVI();
+//    testCRTP();
+    testTypeDeduction();
 
-  initalization(argc, argv);
-  testNVI();
-  testCRTP();
-  testTypeDeduction();
-
-  return 0;
+    return 0;
 }
