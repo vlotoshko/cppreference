@@ -1,6 +1,7 @@
 #include <iostream>
 #include <typeinfo>
 #include "initialization.h"
+#include "strings.h"
 
 
 // --- NVI classes
@@ -9,6 +10,7 @@ class BaseNVI {
 private:
   virtual void helloWorld_impl () = 0;
 public:
+  virtual ~BaseNVI(){}
   void helloWorld () {
     std::cout << "check pre-conditions" << std::endl;
     helloWorld_impl();
@@ -77,31 +79,6 @@ class CounterCRPT : public Counter<CounterCRPT> {
 
 
 
-
-template<typename T, typename N >
-struct Node
-{
-    T data;
-    N *next;
-};
-
-class Stub{};
-
-template<typename T>
-struct Node<T, Stub>
-{
-    T data;
-    Node *next;
-};
-
-
-template<typename T>
-struct DualNode : public Node<T, DualNode<T>>
-{
-    DualNode *prev;
-};
-
-
 void testCRTP() {
   DerivedCRTP d1;
   d1.implementation();
@@ -120,23 +97,71 @@ void testCRTP() {
 }
 
 
+// --- C++1y - type deduction
+
+// using undefined template to findout type T by compiler error
+
+// paramType is a reference
+template<typename T>
+void errFunc1(T& param);
+
+// paramType is a universal reference
+template<typename T>
+void errFunc2(T&& param);
+
+// paramType is nor a reference neither universal reference
+template<typename T>
+void errFunc3(T param);
+
+
+template< typename T, std::size_t N >
+constexpr std::size_t arraySize(T (&) [N]) {
+    return N;
+}
+
+void someFunc(double, int) {}
+
+void testTypeDeduction() {
+    int x = 27;
+    const int cx = x;
+    const int& rx = x;
+
+    const char name[] = "array";
+
+//    errFunc1(x);
+//    errFunc1(cx);
+//    errFunc1(rx);
+//    errFunc1(42);
+//    errFunc1(name);
+//    errFunc1(someFunc);
+
+//    errFunc2(x);
+//    errFunc2(cx);
+//    errFunc2(rx);
+//    errFunc2(42);
+//    errFunc2(name);
+//    errFunc2(someFunc);
+
+//    errFunc3(x);
+//    errFunc3(cx);
+//    errFunc3(rx);
+//    errFunc3(42);
+//    errFunc3(name);
+//    errFunc3(someFunc);
+
+    std::cout << arraySize(name) << std::endl;
+}
+
+
 
 int main(int argc, char **argv)
 {
-  std::cout << "Hello World!" << std::endl;
+    std::cout << "Hello World!" << std::endl;
 
   initalization(argc, argv);
   testNVI();
   testCRTP();
-
-  DualNode<int> a;
-
-  std::cout << "a.prev is: " << typeid(a.prev).name() << std::endl;
-  std::cout << "a.next is: " << typeid(a.next).name() << std::endl;
-
-  Node<int, Stub> b;
-  std::cout << "b.next is: " << typeid(b.next).name() << std::endl;
-
+  testTypeDeduction();
 
   return 0;
 }
