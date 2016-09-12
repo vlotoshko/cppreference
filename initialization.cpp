@@ -132,7 +132,7 @@ void aggreinit() {
 }
 
 
-void initalization(int argc, char **argv)
+void testInitalization(int argc, char **argv)
 {
   std::cout << "Initialization funcs" << std::endl;
 
