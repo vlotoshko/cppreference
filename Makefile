@@ -14,17 +14,14 @@ TARGET = cppreference
 OBJDIR = ./obj
 
 # objects list - *.o files
-OBJECTS = initialization.o strings.o nvi_and_crtp.o type_deduction.o smart_pointers.o \
-other.o main.o
+_OBJECTS_WITH_HEADERS = initialization.o strings.o nvi_and_crtp.o type_deduction.o smart_pointers.o \
+other.o
+# adds './obj/' to every item of OBJECTS_WITH_HEADERS making new list for OBJS
+OBJECTS_WITH_HEADERS = $(patsubst %, $(OBJDIR)/%, $(_OBJECTS_WITH_HEADERS))
 
-## main is separated becasue it does not depend of header
-#MAINOBJ = main.o
-
-OBJS = $(patsubst %, $(OBJDIR)/%, $(OBJECTS))
-
-# SRCDIR = ./src
-# SRCS = $(patsubst %, $(SRCDIR)/%, $(OBJECTS))
-
+# main is separated becasue it depends of all headers
+_MAINOBJ = main.o
+MAINOBJ = $(patsubst %, $(OBJDIR)/%, $(_MAINOBJ))
 
 # first target
 all: $(TARGET)
@@ -32,13 +29,16 @@ all: $(TARGET)
 # $@ - macros that means left side of the :
 # $^ - macros that means right side of the :
 # $< - the first item in the dependencies list
-$(TARGET): $(OBJS)
-	echo "OBJS ::: " $^
-	$(CC) -o $@ $^
 
-$(OBJDIR)/%.o: %.cpp
-	echo "CPPS ::: " $^
-	$(CC) $(CFLAGS) -c -o $@ $<
+# linking objects
+$(TARGET): $(OBJECTS_WITH_HEADERS) $(MAINOBJ)
+	$(CC) -o $@ $^ $(LDFLAGS)
+
+$(OBJDIR)/%.o: %.cpp %.h
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+$(MAINOBJ): main.cpp *.h
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 
 .PHONY: clean
