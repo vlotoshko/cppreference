@@ -9,7 +9,7 @@ using std::endl;
 // --- auto_ptr
 
 // WHY
-// excpetion safety, passing ownership of doa into functions, returning doa from functions
+// excpetion safety, passing ownership of doa into functions, returning dao from functions
 
 using std::auto_ptr;
 
@@ -59,6 +59,69 @@ void testAutoPtr() {
 
 
 
+// --- unigue_ptr
+
+// WHY
+// auto_ptr replacement, move semantic instead of 'copy' semantic, user-defined deleter
+// array partial specialization
+// excpetion safety, passing ownership of doa into functions, returning dao from functions
+
+using std::unique_ptr;
+
+
+template<typename T, typename D = std::default_delete<T>>
+unique_ptr<T, D> getSomeTfromHeap() {
+  return unique_ptr<T, D> (new T());
+}
+
+// this function has no sence because of const unique_ptr
+template<typename T, typename D = std::default_delete<T>>
+const unique_ptr<T, D> getSomeConstTfromHeap() {
+  return unique_ptr<T, D> (new T());
+}
+
+class UniquePtrTest
+{
+public:
+  UniquePtrTest() : _someint(0) { ++_counter; cout << "UniquePtrTest ctor: " << _counter << endl; }
+  ~UniquePtrTest() { cout << "UniquePtrTest dtor: " << _counter << endl; --_counter; }
+  void incSomeInt() { ++_someint; }
+  int getSomeInt() const { return _someint; }
+private:
+  static int _counter;
+  int _someint;
+};
+
+int UniquePtrTest::_counter = 0;
+
+std::ostream & operator<< (std::ostream &o,  const UniquePtrTest &u) { return o << 30; }
+
+class UniquePtrTestDeleter {
+public:
+  void operator()(UniquePtrTest *ut){ cout << "UniquePtrTest dter" << endl; delete ut; }
+};
+
+
+void testUniquePtr() {
+  auto u1 = getSomeTfromHeap<int>();
+  cout << *u1 << endl;
+
+  auto u2 = getSomeTfromHeap<UniquePtrTest>();
+  cout << *u2 << endl;
+
+  auto u3 = getSomeTfromHeap<UniquePtrTest, UniquePtrTestDeleter>();
+  cout << *u3 << endl;
+
+  const unique_ptr<UniquePtrTest> u4(new UniquePtrTest());
+  cout << *u4 << endl;
+  u4->incSomeInt();
+  u4->incSomeInt();
+  cout << u4->getSomeInt() << endl;
+//  auto u4 = getSomeConstTfromHeap<int>();
+}
+
+
 void testSmartPointers() {
   testAutoPtr();
+  testUniquePtr();
 }
