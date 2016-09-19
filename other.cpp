@@ -60,7 +60,63 @@ void testNonConst() {
   t1 = f1();
 }
 
+
+
+
+
+class Base {
+public:
+  int b;
+  virtual void show() const { cout << "Base: b = " << b << endl; }
+};
+
+class Derived : public Base {
+public:
+  int d;
+  void show() const { cout << "Derived: b = " << b << "; d = " << d << endl; }
+  void newFunc() { cout << ch << endl; }
+  char ch;
+};
+
+
+void baseByValue(Base b) {
+  b.show();
+}
+
+void derivedByValue(Derived d) {
+  d.show();
+}
+
+
+void testSlicing() {
+  Base b;
+  b.b = 1;
+  Derived d;
+  d.b = 2;
+  d.d = 3;
+
+  baseByValue(d);
+  baseByValue(b);
+
+//  derivedByValue(static_cast<Derived>(b));
+  derivedByValue(d);
+
+  Base *bp = new Base();
+  Derived *dp = (Derived *)bp;
+  dp->show();
+  Derived &dr = *dp;
+  Derived *dp1 = static_cast<Derived *>(bp);
+  Derived &dr2 = static_cast<Derived &>(*bp);
+  dr.newFunc();
+  dr2.newFunc();
+  dp1->newFunc();
+
+}
+
 void testOther(){
   testNonConst();
+  testSlicing();
+  cout << endl;
+
 //   isLucky(true);
 }

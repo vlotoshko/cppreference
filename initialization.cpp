@@ -113,8 +113,9 @@ void listinit() {
   std::cout << "s3.mem = " << s3.mem << std::endl;
   std::cout << "s3.str = " << s3.str << std::endl;
   std::cout << "s3.str = " << S3({1, "test"}).str << std::endl;
-  int bad{12.0};
-  unsigned char ch{-12};
+  // narrowing conversion
+//  int bad{12.0};
+//  unsigned char ch{-12};
 }
 
 
@@ -126,9 +127,10 @@ struct AG {
 };
 
 void aggreinit() {
-  AG ag = {1, 2.0};
-  int a1[]{1, 2.0};
-  int a2[] = {1, 2.0};
+  // narrowing conversion
+//  AG ag = {1, 2.0};
+//  int a1[]{1, 2.0};
+//  int a2[] = {1, 2.0};
 }
 
 

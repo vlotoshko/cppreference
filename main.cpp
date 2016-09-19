@@ -14,7 +14,7 @@ using std::endl;
 int main(int argc, char **argv)
 {
   std::cout << "Hello World!" << std::endl;
-//  testOther();
+  testOther();
 //  testInitalization(argc, argv);
 //  testNVI();
 //  testCRTP();

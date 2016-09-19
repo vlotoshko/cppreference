@@ -9,7 +9,7 @@ using std::endl;
 // --- auto_ptr
 
 // WHY
-// excpetion safety, passing ownership of doa into functions, returning dao from functions
+// excpetion safety, passing ownership of dao into functions, returning dao from functions
 
 using std::auto_ptr;
 
@@ -64,7 +64,7 @@ void testAutoPtr() {
 // WHY
 // auto_ptr replacement, move semantic instead of 'copy' semantic, user-defined deleter
 // array partial specialization
-// excpetion safety, passing ownership of doa into functions, returning dao from functions
+// excpetion safety, passing ownership of dao into functions, returning dao from functions
 
 using std::unique_ptr;
 
