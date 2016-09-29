@@ -45,11 +45,11 @@ auto autoTTDlFunc(Container& c, Index i) {
 }
 
 // decltype(auto) means type should be deducted but using decltype rules
-//template <typename Container, typename Index>
-//decltype(auto)
-//retDeclFunc(Container& c, Index i) {
-//    return c[i];
-//}
+template <typename Container, typename Index>
+decltype(auto)
+retDeclFunc(Container& c, Index i) {
+    return c[i];
+}
 
 
 
