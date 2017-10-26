@@ -2,7 +2,7 @@
 CC = g++
 
 # compiler flags
-CFLAGS = -c -Wall -std=c++1y
+CFLAGS = -c -Wall -std=c++1y  -DEBUG
 
 # libraries flags
 LDFLAGS =

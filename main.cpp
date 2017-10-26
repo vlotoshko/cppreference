@@ -28,141 +28,36 @@ void testRValue(){
     int a = 9;
     int& la = a;
     int&& ra = passRValue(7);
-
 }
 
-
-
-class CConnectionTest
+class TestNew
 {
 public:
-    CConnectionTest()
-    {
-
-    }
-    virtual ~CConnectionTest(){}
-
-    std::string getResult()
-    {
-        std::array<char, CMode::Last> result;
-        int idx = 0;
-        for (auto & r : result)
-        {
-           r = toChar(m_Result[idx++]);
-        }
-        return std::string(result.data());
-    }
-
-protected:
-    enum CResult { NotTested, Passed, Failed, Unknown };
-    enum CMode { RemoteResource = 0, LocalResource, Login, Read, Write, Execute, Last };
-
-    virtual CResult checkRemoteResource() { return NotTested; }
-    virtual CResult checkLocalResource() { return NotTested; }
-    virtual CResult checkLogin() { return NotTested; }
-    virtual CResult checkCanRead() { return NotTested; }
-    virtual CResult checkCanWrite() { return NotTested; }
-    virtual CResult checkCanExecute() { return NotTested; }
-
-    std::array<CResult, Last> m_Result = {{NotTested}};
-private:
-    char toChar(CResult res)
-    {
-        switch (res) {
-        case NotTested:
-            return '-';
-            break;
-        case Passed:
-            return 'Y';
-            break;
-        case Failed:
-            return 'N';
-            break;
-        default:
-            return 'X';
-            break;
-        }
-    }
+    TestNew(int i) : mInt(i) {}
+    int mInt;
 };
 
-class CLocalTest : public CConnectionTest
+void testNew()
 {
-public:
-    CLocalTest()
-    {
-
+    TestNew * buff = static_cast<TestNew *>(::operator new (sizeof(TestNew) * 10));
+    TestNew * n1 = new(buff) TestNew(45);
+    TestNew * n5 = new(buff + 5) TestNew(51);
+    n5 = buff;
+    for (int var = 0; var < 5; ++var) {
+        n5++;
     }
-    void check()
-    {
-        if (checkLocalResource() == Passed)
-        {
-            std::cout << "Hello World!" << std::endl;
-            checkCanRead();
-            checkCanWrite();
-            checkCanExecute();
-        }
-    }
-
-protected:
-    CResult checkLocalResource() override
-    {
-        if (m_Result[LocalResource] == NotTested)
-        {
-            // try to connect to local resource
-            m_Result[LocalResource] = Passed;
-
-            if (m_Result[LocalResource] != Passed)
-            {
-                m_Result[Read] = Unknown;
-                m_Result[Write] = Unknown;
-                m_Result[Execute] = Unknown;
-            }
-            std::cout << "Hello World! 1" << std::endl;
-        }
-        std::cout << "Hello World! 2" << std::endl;
-        return m_Result[LocalResource];
-    }
-
-    CResult checkCanRead() override
-    {
-        if (m_Result[Read] == NotTested)
-        {
-            // try to connect to local resource
-            m_Result[Read] = Passed;
-        }
-        return m_Result[Read];
-    }
-
-    CResult checkCanWrite() override
-    {
-        if (m_Result[Write] == NotTested)
-        {
-            // try to connect to local resource
-            m_Result[Write] = Unknown;
-        }
-        return m_Result[Write];
-    }
-
-    CResult checkCanExecute() override
-    {
-        if (m_Result[Execute] == NotTested)
-        {
-            // try to connect to local resource
-            m_Result[Execute] = Failed;
-        }
-        return m_Result[Execute];
-    }
-};
-
-
-void testConnTest()
-{
-    CLocalTest c;
-    c.check();
-    std::cout << "result is: " << c.getResult() << std::endl;
-//    if (c.m_Result[CLocalTest::CMode::LocalResource] == CLocalTest::CResult::NotTested)
-
+    cout << n1->mInt << endl;
+    cout << n5->mInt << endl;
+    n1->~TestNew();
+    n5->~TestNew();
+    delete buff;
 }
+
+int returnZero()
+{
+    return 0;
+}
+
 
 int main(int argc, char **argv)
 {
@@ -174,7 +69,9 @@ int main(int argc, char **argv)
 //  testTypeDeduction();
 //  testSmartPointers();
 
-  testConnTest();
+  testNew();
   testRValue();
+
+  int i = returnZero() - 1;
   return 0;
 }
