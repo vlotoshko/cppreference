@@ -111,8 +111,8 @@ void listinit() {
 
   S3 s3 = passT<S3>({3, "sdafa"});
   std::cout << "s3.mem = " << s3.mem << std::endl;
-  std::cout << "s3.str = " << s3.str << std::endl;
-  std::cout << "s3.str = " << S3({1, "test"}).str << std::endl;
+  std::cout << "s3.str = " << s3.str.c_str() << std::endl;
+  std::cout << "s3.str = " << S3({1, "test"}).str.c_str() << std::endl;
   // narrowing conversion
 //  int bad{12.0};
 //  unsigned char ch{-12};
@@ -134,7 +134,7 @@ void aggreinit() {
 }
 
 
-void testInitalization(int argc, char **argv)
+void testInitalization()
 {
   std::cout << "Initialization funcs" << std::endl;
 

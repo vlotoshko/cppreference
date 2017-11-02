@@ -1,6 +1,6 @@
 #ifndef INITIALIZATION_H
 #define INITIALIZATION_H
 
-void testInitalization(int argc, char **argv);
+void testInitalization();
 
 #endif // INITIALIZATION_H

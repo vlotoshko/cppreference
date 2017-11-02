@@ -18,7 +18,6 @@ int passRValue(int&& i) {
     return 0;
 }
 
-
 void testRValue(){
     passRValue(3 + 2);
     passRValue(3);
@@ -53,25 +52,19 @@ void testNew()
     delete buff;
 }
 
-int returnZero()
-{
-    return 0;
-}
 
-
-int main(int argc, char **argv)
+int main()
 {
   std::cout << "Hello World!" << std::endl;
-//  testOther();
-//  testInitalization(argc, argv);
+  testOther();
+//  testInitalization();
 //  testNVI();
 //  testCRTP();
 //  testTypeDeduction();
 //  testSmartPointers();
 
-  testNew();
-  testRValue();
+//  testNew();
+//  testRValue();
 
-  int i = returnZero() - 1;
   return 0;
 }
