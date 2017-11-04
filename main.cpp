@@ -1,24 +1,26 @@
 #include <iostream>
+#include <array>
+
 #include "initialization.h"
 #include "strings.h"
 #include "nvi_and_crtp.h"
 #include "type_deduction.h"
 #include "smart_pointers.h"
 #include "other.h"
-#include <array>
 
 using std::cout;
 using std::endl;
 
 
-int passRValue(int&& i) {
+int passRValue(int&& i)
+{
     cout << i++ << endl;
     cout << i << endl;
-
     return 0;
 }
 
-void testRValue(){
+void testRValue()
+{
     passRValue(3 + 2);
     passRValue(3);
     int i = 1;
@@ -42,7 +44,8 @@ void testNew()
     TestNew * n1 = new(buff) TestNew(45);
     TestNew * n5 = new(buff + 5) TestNew(51);
     n5 = buff;
-    for (int var = 0; var < 5; ++var) {
+    for (int var = 0; var < 5; ++var)
+    {
         n5++;
     }
     cout << n1->mInt << endl;
@@ -62,7 +65,6 @@ int main()
 //  testCRTP();
 //  testTypeDeduction();
 //  testSmartPointers();
-
 //  testNew();
 //  testRValue();
 
