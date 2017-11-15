@@ -45,7 +45,7 @@ struct S {
     static const int c;
 };
 
-const int d = 10 * S::c; // not a constant expression: S::c has no preceding
+/*constexpr*/ int d = 10 * S::c; // not a constant expression: S::c has no preceding
                          // initializer, this initialization happens after const
 
 const int S::c = 5;      // constant initialization, guaranteed to happen first

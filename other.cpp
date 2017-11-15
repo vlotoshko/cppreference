@@ -57,7 +57,7 @@ class NonConstArgs
 {
 public:
     NonConstArgs() {cout << "def constr" << endl;}
-    explicit NonConstArgs(int) { cout << "constr with int" << endl; }
+    NonConstArgs(int) { cout << "constr with int" << endl; }
     explicit NonConstArgs(char) { cout << "constr with char" << endl; }
 
     // copy constructor with non const argument
@@ -73,14 +73,17 @@ public:
 
 NonConstArgs f1()
 {
-    return NonConstArgs(5);
+    int a = 5;
+    NonConstArgs n = 5;
+    return NonConstArgs(a);
 }
 
 void testNonConstArgs()
 {
-    NonConstArgs t1;
-    cout << endl;
-    t1 = f1();
+    f1();
+//    NonConstArgs t1;
+//    cout << endl;
+//    t1 = f1();
 }
 
 
