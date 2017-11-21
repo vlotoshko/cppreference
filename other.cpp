@@ -1,4 +1,5 @@
 #include <iostream>
+#include <typeinfo>
 #include "other.h"
 
 using std::cout;
@@ -74,7 +75,17 @@ public:
 NonConstArgs f1()
 {
     int a = 5;
-    NonConstArgs n = 5;
+//    NonConstArgs n = 5; // TODO: compare error at Windows
+//    /home/arete/GitHub/cppreference/other.cpp:78: error: invalid initialization of non-const reference of type ‘NonConstArgs&’ from an rvalue of type ‘NonConstArgs’
+//         NonConstArgs n = 5;
+//                          ^
+//    /home/arete/GitHub/cppreference/other.cpp:65: note:   initializing argument 1 of ‘NonConstArgs::NonConstArgs(NonConstArgs&)’
+//         NonConstArgs(NonConstArgs&) { cout << "copy constr" << endl; }
+//         ^
+//    /home/arete/GitHub/cppreference/other.cpp:61: note:   after user-defined conversion: NonConstArgs::NonConstArgs(int)
+//         NonConstArgs(int) { cout << "constr with int" << endl; }
+//         ^
+
     return NonConstArgs(a);
 }
 
@@ -120,7 +131,6 @@ void testSlicing()
 void testUpcasting()
 {
     Base *bp = new Base();
-
     // upcast by pointer
     Derived *dp = static_cast<Derived *>(bp);
     // upcast by reference
