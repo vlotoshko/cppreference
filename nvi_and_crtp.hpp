@@ -1,5 +1,5 @@
-#ifndef NVI_AND_CRTP_H
-#define NVI_AND_CRTP_H
+#ifndef NVI_AND_CRTP_HPP
+#define NVI_AND_CRTP_HPP
 #include <iostream>
 
 void testNVI();
@@ -25,4 +25,4 @@ class DerivedNVI : public BaseNVI
   }
 };
 
-#endif // NVI_AND_CRTP_H
+#endif // NVI_AND_CRTP_HPP

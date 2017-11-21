@@ -1,6 +1,6 @@
 #include <iostream>
 #include <typeinfo>
-#include "other.h"
+#include "other.hpp"
 
 using std::cout;
 using std::endl;

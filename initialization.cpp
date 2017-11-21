@@ -1,7 +1,7 @@
 #include <iostream>
 #include <array>
 
-#include "initialization.h"
+#include "initialization.hpp"
 
 
 // --- default initialization

@@ -1,5 +1,5 @@
-#ifndef OTHER_H
-#define OTHER_H
+#ifndef OTHER_HPP
+#define OTHER_HPP
 
 void testOther();
 
@@ -25,4 +25,4 @@ public:
     char ch;
 };
 
-#endif // OTHER_H
+#endif // OTHER_HPP

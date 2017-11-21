@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <locale>
-#include "strings.h"
+#include "strings.hpp"
 
 using std::string;
 using std::wstring;

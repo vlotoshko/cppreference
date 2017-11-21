@@ -1,4 +1,4 @@
-#include "nvi_and_crtp.h"
+#include "nvi_and_crtp.hpp"
 
 BaseNVI::~BaseNVI(){}
 

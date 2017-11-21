@@ -1,13 +1,14 @@
 #include <iostream>
 #include <array>
 
-#include "initialization.h"
-#include "strings.h"
-#include "nvi_and_crtp.h"
-#include "type_deduction.h"
-#include "smart_pointers.h"
-#include "other.h"
-#include "move_semantics.h"
+#include "initialization.hpp"
+#include "strings.hpp"
+#include "nvi_and_crtp.hpp"
+#include "type_deduction.hpp"
+#include "smart_pointers.hpp"
+#include "other.hpp"
+#include "move_semantics.hpp"
+#include "lambda.hpp"
 
 using std::cout;
 using std::endl;
@@ -40,12 +41,13 @@ void testNew()
 int main()
 {
   cout << "Hello World!" << endl;
-  testMoveSemantics();
+  testLambda();
+//  testMoveSemantics();
 //  testOther();
 //  testInitalization();
 //  testNVI();
 //  testCRTP();
-  testString();
+//  testString();
 //  testTypeDeduction();
 //  testSmartPointers();
 //  testNew();
