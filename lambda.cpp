@@ -1,68 +1,71 @@
 #include <iostream>
 #include <vector>
+#include <functional>
 #include "lambda.hpp"
 
 using lambda = std::function<void (int)>;
 
 class LambdaHolder
 {
-private:
-std::vector<lambda> lambdas;
 public:
-	void addLambda(const lambda la)
-	{
-		lambdas.push_back(la);
-	}
-	void invokeAll(int i) const
-	{
-		for( auto& la : lambdas)
-		{
-			la(i);
-		}
-	}
+    LambdaHolder(std::string& str) : _strValue(str) {}
+    void addLambda(const lambda la)
+    {
+        _lambdas.push_back(la);
+    }
+
+    void invokeAll(int i) const
+    {
+        for(auto& la : _lambdas)
+        {
+            _strValue = "initial str";
+            la(i);
+            std::cout << "string value after lambda: " << _strValue.c_str() << std::endl << std::endl;
+        }
+    }
+private:
+    std::vector<lambda> _lambdas;
+    std::string& _strValue;
 };
 
 class TestThis
 {
 public:
-	void lambdaWithThisCapturing(int a) const
+    void addLambdaWithThisCapturing(LambdaHolder & lh) const
 	{
-		auto la = [this](int x)
+        lh.addLambda([this](int x)
 		{
-			std::cout << "test 'this' passing: " << _value + x << std::endl;
-		};
-		la(a);
+            std::cout << "'this' capturing: " << _value + x << std::endl;
+        });
 	}
 	
-	void lambdaWithThisCapturingImplicitly(int a) const
+    void addLambdaWithThisCapturingImplicitly(LambdaHolder & lh) const
+    {
+        lh.addLambda([=](int x)
+        {
+            // _value implicitly used like this->_value
+            std::cout << "'this' capturing implicitly: " << _value + x << std::endl;
+        });
+    }
+
+
+    void addLambdaWithMemberClassCapturingByValue(LambdaHolder & lh) const
 	{
-		auto la = [=](int x)
+        lh.addLambda([_value = _value](int x)
 		{
-			// _value implicitly used like this->_value
-			std::cout << "test 'this' passing: " << _value + x << std::endl;
-		};
-		la(a);
+            std::cout << "member class capturing: " << _value + x << std::endl;
+        });
 	}
 	
-	void lambdaWithMemberClassCapturingByValue(int a) const
+    void addLambdaWithStaticMember(LambdaHolder & lh) const
 	{
-		auto la = [_value = _value](int x)
-		{
-			std::cout << "test 'this' passing: " << _value + x << std::endl;
-		};
-		la(a);
-	}
-	
-	void lambdaWithStaticMember(int a) const
-	{
-		auto la = [=](int x)
+        lh.addLambda([=](int x)
 		{
 			// static members cannot be captured, so there is no capturing by value
-			std::cout << "test 'this' passing: " << TestThis::staticValue + x << std::endl;
-		};
-		la(a);
+            std::cout << "static members cannot be captured: " << TestThis::staticValue + x << std::endl;
+        });
 	}
-	
+
 	static int staticValue;
 	void setValue(int v)
 	{
@@ -76,63 +79,56 @@ int TestThis::staticValue = 5;
 
 void testLambda()
 {
-	// Captures nothing
-	auto captures_nothing = [](int i)
+    std::string str;
+    LambdaHolder lh(str);
+
+    // Captures nothing
+    lh.addLambda([](int)
     {
-    	return ++i;
-	};
-	std::cout << "captures_nothing: " <<  captures_nothing(6) <<  std::endl;
+        std::cout << "captures_nothing" << std::endl;
+    });
 
-	std::string str{"some string"};
+    // Captures by value
+    lh.addLambda([str] (int) mutable
+    {
+        str = "changed string 1";
+        std::cout << "captures_by_value: " << str.c_str() << std::endl;
+    });
 
-	// Captures by value
-	auto captures_by_value = [str] (int i) mutable
-	{
-		str = "changed string 1";
-		std::cout << "captures_by_value: " << str.c_str() << std::endl;
-		return ++i;
-	};
+    // Captures all by value
+    lh.addLambda([=] (int) mutable
+    {
+        str = "changed string 2";
+        std::cout << "captures_all_by_value: " << str.c_str() << std::endl;
+    });
 
-	captures_by_value(7);
-	std::cout << "string now: " << str.c_str() << std::endl;
+    // Captures by reference
+    lh.addLambda([&str] (int) mutable
+    {
+        str = "changed string 3";
+        std::cout << "captures_by_reference: " << str.c_str() << std::endl;
+    });
 
+    // Captures all by reference
+    lh.addLambda([&] (int) mutable
+    {
+        str = "changed string 4";
+        std::cout << "captures_all_by_reference: " << str.c_str() << std::endl;
+    });
 
-	// Captures all by value
-	auto captures_all_by_value = [=] (int i) mutable
-	{
-		str = "changed string 2";
-		std::cout << "captures_all_by_value: " << str.c_str() << std::endl;
-		return ++i;
-	};
+    TestThis tt;
+    tt.setValue(2);
+    tt.addLambdaWithThisCapturing(lh);
+    tt.addLambdaWithMemberClassCapturingByValue(lh);
+    tt.addLambdaWithStaticMember(lh);
 
-	captures_all_by_value(7);
-	std::cout << "string now: " << str.c_str() << std::endl;
+    {
+        TestThis danglingT;
+        danglingT.setValue(6);
+        // dangling this, danglingT destroyed before used in the lambda
+        danglingT.addLambdaWithThisCapturingImplicitly(lh);
+    }
 
+    lh.invokeAll(1);
 
-	// Captures by reference
-	auto captures_by_ref = [&str] (int i) mutable
-	{
-		str = "changed string 3";
-		std::cout << "captures_by_reference: " << str.c_str() << std::endl;
-		return ++i;
-	};
-
-	captures_by_ref(7);
-	std::cout << "string now: " << str.c_str() << std::endl;
-
-
-	// Captures all by reference
-	auto captures_all_by_ref = [&] (int i) mutable
-	{
-		str = "changed string 4";
-		std::cout << "captures_all_by_reference: " << str.c_str() << std::endl;
-		return ++i;
-	};
-
-	captures_all_by_ref(7);
-	std::cout << "string now: " << str.c_str() << std::endl;
-
-	TestThis t;
-	t.setValue(3);
-	t.lambdaWithThisCapturing(2);
 }
