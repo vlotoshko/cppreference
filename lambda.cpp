@@ -5,6 +5,12 @@
 
 using lambda = std::function<void (int)>;
 
+// TODO: function passing or capturing, timing function
+// TODO: init capture and generalized init capture compiler support
+// TODO: generalized lambda expression
+// TODO: bind functions howto
+// TODO: class example like lambda expression
+
 class LambdaHolder
 {
 public:
@@ -55,6 +61,7 @@ public:
 
     void addLambdaWithMemberClassCapturingByValue(LambdaHolder & lh) const
 	{
+		// member class capturing with init capture, not supported by C++11
         lh.addLambda([_value = _value](int x)
 		{
             std::cout << "member class capturing: " << _value + x << std::endl;
