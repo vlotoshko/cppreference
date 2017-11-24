@@ -1,19 +1,69 @@
 #include <iostream>
+#include <vector>
 #include "lambda.hpp"
+
+using lambda = std::function<void (int)>;
+
+class LambdaHolder
+{
+private:
+std::vector<lambda> lambdas;
+public:
+	void addLambda(const lambda la)
+	{
+		lambdas.push_back(la);
+	}
+	void invokeAll(int i) const
+	{
+		for( auto& la : lambdas)
+		{
+			la(i);
+		}
+	}
+};
 
 class TestThis
 {
 public:
-	void lambdaInvoke(int a) const
+	void lambdaWithThisCapturing(int a) const
 	{
 		auto la = [this](int x)
 		{
 			std::cout << "test 'this' passing: " << _value + x << std::endl;
 		};
-
 		la(a);
 	}
-
+	
+	void lambdaWithThisCapturingImplicitly(int a) const
+	{
+		auto la = [=](int x)
+		{
+			// _value implicitly used like this->_value
+			std::cout << "test 'this' passing: " << _value + x << std::endl;
+		};
+		la(a);
+	}
+	
+	void lambdaWithMemberClassCapturingByValue(int a) const
+	{
+		auto la = [_value = _value](int x)
+		{
+			std::cout << "test 'this' passing: " << _value + x << std::endl;
+		};
+		la(a);
+	}
+	
+	void lambdaWithStaticMember(int a) const
+	{
+		auto la = [=](int x)
+		{
+			// static members cannot be captured, so there is no capturing by value
+			std::cout << "test 'this' passing: " << TestThis::staticValue + x << std::endl;
+		};
+		la(a);
+	}
+	
+	static int staticValue;
 	void setValue(int v)
 	{
 		_value = v;
@@ -21,6 +71,8 @@ public:
 private:
 	int _value;
 };
+
+int TestThis::staticValue = 5;
 
 void testLambda()
 {
@@ -82,5 +134,5 @@ void testLambda()
 
 	TestThis t;
 	t.setValue(3);
-	t.lambdaInvoke(2);
+	t.lambdaWithThisCapturing(2);
 }
