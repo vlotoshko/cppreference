@@ -16,11 +16,15 @@ public:
 
     void invokeAll(int i) const
     {
+        std::string initStr = "initial str";
         for(auto& la : _lambdas)
         {
-            _strValue = "initial str";
+            _strValue = initStr;
             la(i);
-            std::cout << "string value after lambda: " << _strValue.c_str() << std::endl << std::endl;
+            if (_strValue != initStr)
+            {
+                std::cout << "--- changed after lambda: from '" << initStr.c_str() << "' to '" << _strValue.c_str() << "'"<< std::endl;
+            }
         }
     }
 private:
