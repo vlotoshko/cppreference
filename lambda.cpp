@@ -9,7 +9,6 @@ using lambda = std::function<void (int)>;
 // TODO: init capture and generalized init capture compiler support
 // TODO: generalized lambda expression
 // TODO: bind functions howto
-// TODO: class example like lambda expression
 
 class LambdaHolder
 {
@@ -86,6 +85,19 @@ private:
 	int _value;
 };
 
+class ClassLikeClosure
+{
+public:
+    ClassLikeClosure(std::string& str) : _strValue(str) {}
+    void operator() (int) const
+    {
+        _strValue = "changed string 5";
+        std::cout << "class like closure: " << _strValue.c_str() << std::endl;
+    }
+private:
+    std::string& _strValue;
+};
+
 int TestThis::staticValue = 5;
 
 void testLambda()
@@ -139,6 +151,25 @@ void testLambda()
         // dangling this, danglingT destroyed before used in the lambda
         danglingT.addLambdaWithThisCapturingImplicitly(lh);
     }
+
+    ClassLikeClosure clc(str);
+    lh.addLambda(clc);
+
+
+    lh.addLambda([str = str] (int) mutable
+    {
+        str = "changed string 4";
+        std::cout << "captures_all_by_reference: " << str.c_str() << std::endl;
+    });
+
+    // generalized lambda expression, since C++14
+    lh.addLambda([str = str] (auto) mutable
+    {
+        str = "changed string 4";
+        std::cout << "captures_all_by_reference: " << str.c_str() << std::endl;
+    });
+
+
 
     lh.invokeAll(1);
 
