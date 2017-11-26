@@ -6,8 +6,6 @@
 using lambda = std::function<void (int)>;
 
 // TODO: function passing or capturing, timing function
-// TODO: init capture and generalized init capture compiler support
-// TODO: generalized lambda expression
 // TODO: bind functions howto
 
 class LambdaHolder
@@ -57,7 +55,6 @@ public:
         });
     }
 
-
     void addLambdaWithMemberClassCapturingByValue(LambdaHolder & lh) const
 	{
 		// member class capturing with init capture, not supported by C++11
@@ -72,7 +69,8 @@ public:
         lh.addLambda([=](int x)
 		{
 			// static members cannot be captured, so there is no capturing by value
-            std::cout << "static members cannot be captured: " << TestThis::staticValue + x << std::endl;
+            std::cout << "static members cannot be captured: "
+            << TestThis::staticValue + x << std::endl;
         });
 	}
 
@@ -158,18 +156,16 @@ void testLambda()
 
     lh.addLambda([str = str] (int) mutable
     {
-        str = "changed string 4";
+        str = "changed string 6";
         std::cout << "captures_all_by_reference: " << str.c_str() << std::endl;
     });
 
     // generalized lambda expression, since C++14
     lh.addLambda([str = str] (auto) mutable
     {
-        str = "changed string 4";
+        str = "changed string 7";
         std::cout << "captures_all_by_reference: " << str.c_str() << std::endl;
     });
-
-
 
     lh.invokeAll(1);
 
