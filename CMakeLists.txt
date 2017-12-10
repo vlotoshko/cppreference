@@ -17,8 +17,9 @@ set(CPP_FILES
 	"other.cpp"
 	"smart_pointers.cpp"
 	"strings.cpp"
-	"type_deduction.cpp"
-	"move_semantics.cpp"
+        "type_deduction.cpp"
+        "move_semantics.cpp"
+        "multithreading.cpp"
 	"lambda.cpp"
 	)
 

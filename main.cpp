@@ -9,6 +9,7 @@
 #include "other.hpp"
 #include "move_semantics.hpp"
 #include "lambda.hpp"
+#include "multithreading.hpp"
 
 using std::cout;
 using std::endl;
@@ -41,6 +42,7 @@ void testNew()
 int main()
 {
   cout << "Hello World!" << endl;
+  testMultiThreading();
 //  testLambda();
   testBinds();
 //  testMoveSemantics();
