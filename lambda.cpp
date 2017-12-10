@@ -26,7 +26,8 @@ public:
             la(i);
             if (_strValue != initStr)
             {
-                std::cout << "--- changed after lambda: from '" << initStr.c_str() << "' to '" << _strValue.c_str() << "'"<< std::endl;
+                std::cout << "--- changed after lambda: from '" << initStr.c_str()
+                          << "' to '" << _strValue.c_str() << "'"<< std::endl;
             }
         }
     }
@@ -70,7 +71,7 @@ public:
 		{
 			// static members cannot be captured, so there is no capturing by value
             std::cout << "static members cannot be captured: "
-            << TestThis::staticValue + x << std::endl;
+                      << TestThis::staticValue + x << std::endl;
         });
 	}
 
@@ -168,5 +169,43 @@ void testLambda()
     });
 
     lh.invokeAll(1);
+}
 
+// parameterless function
+void func0()
+{
+    std::cout << "parameterless function" << std::endl;
+}
+
+// one-parametered function
+void func1(std::string str)
+{
+    std::cout << "one-parametered function: " << str.c_str() << std::endl;
+}
+
+// two-parametered function
+void func2(std::string str, int i)
+{
+    std::cout << "two-parametered function: " << str.c_str()
+              << "; i = " << i << std::endl;
+}
+
+template<typename T>
+void callableInvoker(T& t)
+{
+    t();
+}
+
+void testBinds()
+{
+    callableInvoker(func0);
+    auto func0_1 = std::bind(func1, "test");
+    callableInvoker(func0_1);
+
+    using namespace std::placeholders;
+    auto func0_2 = std::bind(func2, "test2", _1);
+    func0_2(33);
+
+    auto func0_2a = std::bind(func0_2, 44);
+    callableInvoker(func0_2a);
 }

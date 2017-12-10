@@ -2,5 +2,6 @@
 #define LAMBDA_HPP
 
 void testLambda();
+void testBinds();
 
 #endif // LAMBDA_HPP

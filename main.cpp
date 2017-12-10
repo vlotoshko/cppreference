@@ -41,7 +41,8 @@ void testNew()
 int main()
 {
   cout << "Hello World!" << endl;
-  testLambda();
+//  testLambda();
+  testBinds();
 //  testMoveSemantics();
 //  testOther();
 //  testInitalization();
