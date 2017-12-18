@@ -44,7 +44,7 @@ int main()
   cout << "Hello World!" << endl;
   testMultiThreading();
 //  testLambda();
-  testBinds();
+//  testBinds();
 //  testMoveSemantics();
 //  testOther();
 //  testInitalization();
