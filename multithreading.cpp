@@ -235,7 +235,6 @@ public:
                 std::unique_lock<std::mutex> locker(lockQueue_);
 //                while(!addedToQueueSW_)
 //                    addedToQueue_.wait(locker);
-
                 addedToQueue_.wait(locker, [this](){return addedToQueueSW_;});
 
                 while(!queue_.empty())
@@ -280,6 +279,24 @@ void doAsync()
     std::cout << "async result = " << result << std::endl;
 }
 
+void promiseMe()
+{
+    std::promise<int> pro;
+    auto fu = pro.get_future();
+
+    std::thread t([](std::promise<int> pro)
+    {
+        std::cout << "promising..." << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        pro.set_value(33);
+
+    }, std::move(pro));
+
+    fu.wait();
+    std::cout << "promise result = " << fu.get() << std::endl;
+    t.join();
+}
+
 void testMultiThreading()
 {
     std::cout << "supported concurrent threads: " << std::thread::hardware_concurrency() <<std::endl;
@@ -288,4 +305,5 @@ void testMultiThreading()
     callOnceTest();
     ConditionVariableTest cvTest(5);
     doAsync();
+    promiseMe();
 }
