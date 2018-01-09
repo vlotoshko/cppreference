@@ -38,7 +38,6 @@ void testNew()
     delete buff;
 }
 
-
 int main()
 {
   cout << "Hello World!" << endl;
