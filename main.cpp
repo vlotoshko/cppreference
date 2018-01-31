@@ -10,6 +10,7 @@
 #include "move_semantics.hpp"
 #include "lambda.hpp"
 #include "multithreading.hpp"
+#include "atomic.hpp"
 
 using std::cout;
 using std::endl;
@@ -41,7 +42,8 @@ void testNew()
 int main()
 {
   cout << "Hello World!" << endl;
-  testMultiThreading();
+  testAtomic();
+//  testMultiThreading();
 //  testLambda();
 //  testBinds();
 //  testMoveSemantics();

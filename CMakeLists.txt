@@ -22,7 +22,8 @@ set(CPP_FILES
         "type_deduction.cpp"
         "move_semantics.cpp"
         "multithreading.cpp"
-	"lambda.cpp"
+        "atomic.cpp"
+        "lambda.cpp"
 	)
 
 add_executable(${PROJECT_NAME} ${CPP_FILES})

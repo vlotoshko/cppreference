@@ -2,10 +2,10 @@
 CC = g++
 
 # compiler flags
-CFLAGS = -c -Wall -std=c++1y  -DEBUG
+CFLAGS = -c -Wall -std=c++1y -DEBUG
 
 # libraries flags
-LDFLAGS =
+LDFLAGS = -pthread
 
 # main target
 TARGET = cppreference
@@ -15,7 +15,7 @@ OBJDIR = ./obj
 
 # objects list - *.o files
 _OBJECTS_WITH_HEADERS = initialization.o strings.o nvi_and_crtp.o type_deduction.o smart_pointers.o lambda.o\
-other.o
+other.o multithreading.o atomic.o
 # adds './obj/' to every item of OBJECTS_WITH_HEADERS making new list for OBJS
 OBJECTS_WITH_HEADERS = $(patsubst %, $(OBJDIR)/%, $(_OBJECTS_WITH_HEADERS))
 
