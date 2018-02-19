@@ -314,3 +314,45 @@ void testMultiThreading()
     promiseMe();
 
 }
+
+
+template <typename T>
+class queue
+{
+public:
+    queue() : head_(new node), tail_(head_.get()) {}
+    queue(queue const& other) = delete;
+    queue& operator =(queue const& other) = delete;
+
+    std::shared_ptr<T> try_pop()
+    {
+        if (head_.get() == tail_)
+        {
+            return std::shared_ptr<T>();
+        }
+        std::shared_ptr<T> const res(head_->data);
+        std::unique_ptr<node> old_head = std::move(head_);
+        head_ = std::move(old_head->next);
+        return res;
+    }
+
+    void push(T new_value)
+    {
+        std::shared_ptr<T> new_data = std::make_shared<T>(std::move(new_value));
+        std::unique_ptr<node> p(new node);
+        tail_->data = new_data;
+        node * const new_tail = p.get();
+        tail_->next = std::move(p);
+        tail_ = new_tail;
+    }
+
+private:
+    struct node
+    {
+        std::shared_ptr<T> data;
+        std::unique_ptr<node> next;
+    };
+
+    std::unique_ptr<node> head_;
+    node* tail_;
+};

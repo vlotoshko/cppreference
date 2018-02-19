@@ -19,11 +19,11 @@ set(CPP_FILES
 	"other.cpp"
 	"smart_pointers.cpp"
 	"strings.cpp"
-        "type_deduction.cpp"
-        "move_semantics.cpp"
-        "multithreading.cpp"
-        "atomic.cpp"
-        "lambda.cpp"
+	"type_deduction.cpp"
+	"move_semantics.cpp"
+	"multithreading.cpp"
+	"atomic.cpp"
+	"lambda.cpp"
 	)
 
 add_executable(${PROJECT_NAME} ${CPP_FILES})
