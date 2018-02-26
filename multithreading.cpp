@@ -356,3 +356,136 @@ private:
     std::unique_ptr<node> head_;
     node* tail_;
 };
+
+template <typename T>
+class threadsafe_queue
+{
+public:
+    threadsafe_queue() : head_(new node), tail_(head_.get()) {}
+    threadsafe_queue(threadsafe_queue const&) = delete;
+    threadsafe_queue& operator =(threadsafe_queue const&) = delete;
+    std::shared_ptr<T> tryPop();
+    bool tryPop(T& value);
+    std::shared_ptr<T> waitAndPop();
+    void waitAndPop(T& value);
+    void push(T newValue);
+    bool empty();
+
+private:
+    struct node
+    {
+        std::shared_ptr<T> data;
+        std::unique_ptr<node> next;
+    };
+
+    std::mutex headMutex;
+    std::unique_ptr<node> head_;
+    std::mutex tailMutex;
+    node* tail_;
+    std::condition_variable dataCond;
+
+    node* getTail()
+    {
+        std::lock_guard<std::mutex> tailLock(tailMutex);
+        return tail_;
+    }
+
+    std::unique_ptr<node> popHead()
+    {
+        std::unique_ptr<node> oldHead = std::move(head_);
+        head_ = std::move(oldHead->next);
+        return oldHead;
+    }
+
+    std::unique_lock<std::mutex> waitForData()
+    {
+        std::unique_lock<std::mutex> headLock(headMutex);
+        dataCond.wait(headLock, [&](){ return head_.get() != getTail(); });
+        return std::move(headLock);
+    }
+
+    std::unique_ptr<node> waitPopHead()
+    {
+        std::unique_lock<std::mutex> headLock(waitForData());
+        return popHead();
+    }
+
+    std::unique_ptr<node> waitPopHead(T& value)
+    {
+        std::unique_lock<std::mutex> headLock(waitForData());
+        value = std::move(*head_->next);
+        return popHead();
+    }
+
+    std::unique_ptr<node> tryPopHead()
+    {
+        std::unique_lock<std::mutex> headLock(headMutex);
+        if (head_.get() == getTail())
+        {
+            return std::unique_ptr<node>();
+        }
+        return popHead();
+    }
+
+    std::unique_ptr<node> tryPopHead(T& value)
+    {
+        std::unique_lock<std::mutex> headLock(headMutex);
+        if (head_.get() == getTail())
+        {
+            return std::unique_ptr<node>();
+        }
+        value = std::move(*head_->data);
+        return popHead();
+    }
+
+};
+
+template <typename T>
+std::shared_ptr<T> threadsafe_queue<T>::waitAndPop()
+{
+    std::unique_ptr<node> const oldHead = waitPopHead();
+    return oldHead->data;
+}
+
+template <typename T>
+void threadsafe_queue<T>::waitAndPop(T& value)
+{
+    std::unique_ptr<node> const oldHead = waitPopHead(value);
+}
+
+template <typename T>
+std::shared_ptr<T> threadsafe_queue<T>::tryPop()
+{
+    std::unique_ptr<node> const oldHead = tryPopHead();
+    return oldHead ? oldHead->data : std::shared_ptr<T>();
+}
+
+template <typename T>
+bool threadsafe_queue<T>::tryPop(T& value)
+{
+    std::unique_ptr<node> const oldHead = tryPopHead(value);
+    return oldHead;
+}
+
+template <typename T>
+bool threadsafe_queue<T>::empty()
+{
+    std::unique_lock<std::mutex> headLock(headMutex);
+    return head_.get() == getTail();
+}
+
+template <typename T>
+void threadsafe_queue<T>::push(T newValue)
+{
+    std::shared_ptr<T> newData(std::make_shared<T>(std::move(newValue)));
+    std::unique_ptr<node> p(new node);
+    {
+        std::lock_guard<std::mutex> tailLock(tailMutex);
+        tail_->data = newData;
+        node * const newTail = p.get();
+        tail_->next = std::move(p);
+        tail_ = newTail;
+    }
+    dataCond.notify_one();
+}
+
