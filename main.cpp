@@ -42,13 +42,13 @@ void testNew()
 int main()
 {
   cout << "Hello World!" << endl;
-  testAtomic();
+//  testAtomic();
 //  testMultiThreading();
 //  testLambda();
 //  testBinds();
 //  testMoveSemantics();
 //  testOther();
-//  testInitalization();
+	testInitalization();
 //  testNVI();
 //  testCRTP();
 //  testString();
@@ -59,3 +59,30 @@ int main()
 
   return 0;
 }
+
+
+/*
+ * ----- initialization -----------------
+ * C++1998
+ * default initialization
+ * zero initialization
+ *
+ * constant initialization
+ * direct initialization
+ * copy initialization
+ * reference initialization
+ *
+ * C++2003
+ * value initialization
+ *
+ * C++2011
+ * list initialization
+ * agregate initialization
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+*/

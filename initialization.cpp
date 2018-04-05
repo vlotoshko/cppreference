@@ -4,7 +4,7 @@
 #include "initialization.hpp"
 
 
-// --- default initialization
+// --- default initialization (since 98)
 
 class DefInit
 {
@@ -68,7 +68,7 @@ void constinit()
 }
 
 
-// --- zero initialization
+// --- zero initialization (since 98)
 
 void zeroinit ()
 {
@@ -78,7 +78,7 @@ void zeroinit ()
 }
 
 
-// --- value initalization
+// --- value initalization (since 03)
 
 struct S1 {
   int i;
@@ -98,7 +98,7 @@ void valueinit ()
   std::cout << "S1().i = " << S2().i << std::endl;
 }
 
-// --- list initialization
+// --- list initialization (since 11)
 
 template <typename T>
 T passT (T t)
@@ -130,7 +130,7 @@ void listinit()
 }
 
 
-// --- aggregate initialization
+// --- aggregate initialization (since 11)
 
 struct AG
 {
