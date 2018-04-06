@@ -11,6 +11,7 @@
 #include "lambda.hpp"
 #include "multithreading.hpp"
 #include "atomic.hpp"
+#include "copy_elision.h"
 
 using std::cout;
 using std::endl;
@@ -49,6 +50,7 @@ int main()
 //  testMoveSemantics();
 //  testOther();
 	testInitalization();
+    testCopyElision();
 //  testNVI();
 //  testCRTP();
 //  testString();
@@ -78,10 +80,6 @@ int main()
  * C++2011
  * list initialization
  * agregate initialization
- *
- *
- *
- *
  *
  *
  *

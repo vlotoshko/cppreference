@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <atomic>
 #include <thread>
 #include "atomic.hpp"
