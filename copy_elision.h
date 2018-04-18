@@ -9,7 +9,7 @@
  * the copy/move (since C++11) constructor and the destructor have observable side-effects.
  * This is an optimization: even when it takes place and the copy-/move-constructor is not called,
  * it still must be present and accessible (as if no optimization happened at all),
- *  otherwise the program is ill-formed.
+ * otherwise the program is ill-formed.
  *
 */
 

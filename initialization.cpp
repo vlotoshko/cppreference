@@ -42,6 +42,23 @@ void defaultinit()
 }
 
 
+// --- direct & copy initialization
+
+void direct_and_copy_Init()
+{
+    int x(7);  // direct initialization
+    int y = 7; // copy initialization
+
+    // copy-initialization is less permissive than direct-initialization
+    // it does not use explicit constructors in the overload resolution
+    struct Exp
+    {
+        explicit Exp(const char*) {}
+    };
+    Exp e1("abc");  // ok
+//    Exp e2 = "abc"; // error, copy-initialization does not consider explicit constructor
+}
+
 // --- constant initialization
 
 struct S
@@ -80,11 +97,13 @@ void zeroinit ()
 
 // --- value initalization (since 03)
 
-struct S1 {
+struct S1
+{
   int i;
 };
 
-struct S2 {
+struct S2
+{
   int i;
   S2(){}
 };
@@ -95,7 +114,7 @@ void valueinit ()
   std::cout << "int() = " << int() << std::endl;
   std::cout << "int{} = " << int{} << std::endl;
   std::cout << "S1().i = " << S1().i << std::endl;
-  std::cout << "S1().i = " << S2().i << std::endl;
+  std::cout << "S2().i = " << S2().i << std::endl;
 }
 
 // --- list initialization (since 11)
