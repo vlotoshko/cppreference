@@ -40,8 +40,10 @@ void testNew()
     delete buff;
 }
 
+
 int main()
 {
+
   cout << "Hello World!" << endl;
 //  testAtomic();
 //  testMultiThreading();
@@ -49,8 +51,8 @@ int main()
 //  testBinds();
 //  testMoveSemantics();
 //  testOther();
-	testInitalization();
-    testCopyElision();
+//  testInitalization();
+//  testCopyElision();
 //  testNVI();
 //  testCRTP();
 //  testString();
@@ -58,6 +60,7 @@ int main()
 //  testSmartPointers();
 //  testNew();
 //  testRValue();
+  testOneOfThreads();
 
   return 0;
 }

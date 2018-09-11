@@ -8,11 +8,50 @@
 #include <future>
 #include "multithreading.hpp"
 
-
 static thread_local int counter = 0;
-std::mutex cout_mutex;
-std::timed_mutex cout_timed_mutex;
-std::recursive_mutex rec_mutex;
+static std::mutex cout_mutex;
+static std::timed_mutex cout_timed_mutex;
+static std::recursive_mutex rec_mutex;
+
+
+
+
+// Wraps a callable object to perform some task only by one thread while other threads are
+// waiting for calling task is finished.
+// Delay parameter helps to 'gather' threads for waiting, so gathered threads will
+// not call this task repeatedly.
+template<typename Callable>
+class OneOfThreads
+{
+public:
+    OneOfThreads(Callable & c, size_t d = 0) : callableTask_(c), delay_(d) {}
+    void performTask()
+    {
+        std::unique_lock<std::mutex> lock(mutex_, std::try_to_lock);
+        if (lock.owns_lock())
+        {
+            std::cout << std::this_thread::get_id() << ": " << "performing task" << std::endl;
+            callableTask_();
+            std::cout << std::this_thread::get_id() << ": " << "task completed" << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(delay_));
+        }
+        else
+        {
+            std::cout << std::this_thread::get_id() << ": " << "wait for performing task" << std::endl;
+            std::lock_guard<std::mutex> lock(mutex_);
+            std::cout << std::this_thread::get_id() << ": " << "completed waiting" << std::endl;
+        }
+    }
+
+private:
+    Callable & callableTask_;
+    size_t delay_; // milliseconds
+    static std::mutex mutex_;
+};
+template<typename Callable> std::mutex OneOfThreads<Callable>::mutex_;
+
+
+
 
 class CallAbleMutexTest
 {
@@ -313,7 +352,6 @@ void testMultiThreading()
     ConditionVariableTest cvTest(5);
     doAsync();
     promiseMe();
-
 }
 
 
@@ -488,5 +526,44 @@ void threadsafe_queue<T>::push(T newValue)
         tail_ = newTail;
     }
     dataCond.notify_one();
+}
+
+
+void callInThread()
+{
+    auto callable = []()
+    {
+        std::cout << std::this_thread::get_id() << ": " << "doing smth heavy..." << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        return 50;
+    };
+
+    using LambdaType = decltype(callable);
+
+    OneOfThreads<LambdaType> oot(callable);
+    oot.performTask();
+}
+
+void testOneOfThreads()
+{
+    std::thread t1{callInThread};
+    std::thread t2{callInThread};
+    std::thread t3{callInThread};
+    std::thread t4{callInThread};
+    std::thread t5{callInThread};
+    std::thread t6{callInThread};
+    std::thread t7{callInThread};
+    std::thread t8{callInThread};
+    std::thread t9{callInThread};
+
+    t1.join();
+    t2.join();
+    t3.join();
+    t4.join();
+    t5.join();
+    t6.join();
+    t7.join();
+    t8.join();
+    t9.join();
 }
 
