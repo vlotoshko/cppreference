@@ -3,6 +3,7 @@
 
 void testMultiThreading();
 void testOneOfThreads();
+void testTeminateByTimeout();
 
 
 #endif // MULTITHREADING_HPP

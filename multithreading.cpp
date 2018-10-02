@@ -567,3 +567,105 @@ void testOneOfThreads()
     t9.join();
 }
 
+
+
+template<typename Callable>
+bool teminateByTimeout(Callable callable, std::chrono::seconds timeout)
+{
+    std::promise<void> pro;
+    auto fu = pro.get_future();
+
+    std::thread threadToWait([](Callable callable, std::promise<void> p)
+    {
+        callable();
+        p.set_value();
+    },
+    callable, std::move(pro));
+
+    auto threadHandle = threadToWait.native_handle();
+    threadToWait.detach();
+
+    if (fu.wait_for(timeout) == std::future_status::timeout)
+    {
+//        ::TerminateThread(reinterpret_cast<HANDLE>(threadHandle), 666);
+        return true;
+    }
+
+    return false;
+}
+
+template<>
+bool teminateByTimeout<std::thread&&>(std::thread&& thread, std::chrono::seconds timeout)
+{
+    if (thread.joinable())
+    {
+        std::promise<void> pro;
+        auto fu = pro.get_future();
+
+        std::thread threadToWait([](std::thread&& t, std::promise<void> p)
+        {
+            t.join();
+            p.set_value();
+        },
+        std::move(thread), std::move(pro));
+
+        auto threadHandle = threadToWait.native_handle();
+        threadToWait.detach();
+
+        if (fu.wait_for(timeout) == std::future_status::timeout)
+        {
+    //        ::TerminateThread(reinterpret_cast<HANDLE>(threadHandle), 666);
+            return true;
+        }
+    }
+    return false;
+}
+
+
+bool teminateThreadByTimeout(std::thread&& thread, std::chrono::seconds timeout)
+{
+    if (thread.joinable())
+    {
+        std::promise<void> pro;
+        auto fu = pro.get_future();
+
+        std::thread threadToWait([](std::thread&& t, std::promise<void> p)
+        {
+            t.join();
+            p.set_value();
+        },
+        std::move(thread), std::move(pro));
+
+        auto threadHandle = threadToWait.native_handle();
+        threadToWait.detach();
+
+        if (fu.wait_for(timeout) == std::future_status::timeout)
+        {
+            std::cout << "threadHandle: " << threadHandle << std::endl;
+    //        ::TerminateThread(reinterpret_cast<HANDLE>(threadHandle), 666);
+            return true;
+        }
+    }
+    return false;
+}
+
+
+void testTeminateByTimeout()
+{
+    auto wait5 = [](){std::this_thread::sleep_for(std::chrono::seconds(5));};
+
+    std::cout << "teminateByTimeout  1 for 5: " << std::boolalpha
+              << teminateByTimeout(wait5, std::chrono::seconds(1)) << std::endl;
+    std::cout << "teminateByTimeout 10 for 5: " << std::boolalpha
+              << teminateByTimeout(wait5, std::chrono::seconds(10)) << std::endl;
+
+    std::cout << "teminateByTimeout thread  1 for 5: " << std::boolalpha
+              << teminateThreadByTimeout(std::thread{wait5}, std::chrono::seconds(1)) << std::endl;
+
+    std::cout << "teminateByTimeout thread 10 for 5: " << std::boolalpha
+              << teminateThreadByTimeout(std::thread{wait5}, std::chrono::seconds(10)) << std::endl;
+
+    std::cout << "teminateByTimeout empty thread for 5: " << std::boolalpha
+              << teminateThreadByTimeout(std::thread{}, std::chrono::seconds(1)) << std::endl;
+}
+
