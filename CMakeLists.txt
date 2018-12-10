@@ -31,4 +31,20 @@ set(CPP_FILES
 	"copy_elision.cpp"
 	)
 
-add_executable(${PROJECT_NAME} ${CPP_FILES})
+set(HPP_FILES
+	"atomic.hpp"
+	"copy_elision.h"
+	"initialization.hpp"
+	"lambda.hpp"
+	"move_semantics.hpp"
+	"multithreading.hpp"
+	"nvi_and_crtp.hpp"
+	"other.hpp"
+	"smart_pointers.hpp"
+	"strings.hpp"
+	"type_deduction.hpp"
+	)
+
+set(FILES ${CPP_FILES} ${HPP_FILES})
+
+add_executable(${PROJECT_NAME} ${FILES})
