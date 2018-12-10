@@ -1,19 +1,21 @@
 #include <iostream>
 #include <array>
 
-#include "initialization.h"
+#include "initialization.hpp"
 
 
-// --- default initialization
+// --- default initialization (since 98)
 
-class DefInit {
+class DefInit
+{
 public:
   DefInit() {}
   DefInit(int a) : memb(a) {}
   int memb;
 };
 
-struct T1 {
+struct T1
+{
   int mem;
 };
 
@@ -23,7 +25,8 @@ struct T2
     T2() { } // "mem" is not in the initializer list
 };
 
-void defaultinit() {
+void defaultinit()
+{
   DefInit d1;
   DefInit d2(3);
   int a;
@@ -39,71 +42,98 @@ void defaultinit() {
 }
 
 
+// --- direct & copy initialization
+
+void direct_and_copy_Init()
+{
+    int x(7);  // direct initialization
+    int y = 7; // copy initialization
+
+    // copy-initialization is less permissive than direct-initialization
+    // it does not use explicit constructors in the overload resolution
+    struct Exp
+    {
+        explicit Exp(const char*) {}
+    };
+    Exp e1("abc");  // ok
+//    Exp e2 = "abc"; // error, copy-initialization does not consider explicit constructor
+}
+
 // --- constant initialization
 
-struct S {
+struct S
+{
     static const int c;
 };
 
-const int d = 10 * S::c; // not a constant expression: S::c has no preceding
+/*constexpr*/ int d = 10 * S::c; // not a constant expression: S::c has no preceding
                          // initializer, this initialization happens after const
 
 const int S::c = 5;      // constant initialization, guaranteed to happen first
 
-constexpr const int& return50() {
+constexpr const int& return50()
+{
   return S::c;
 }
 
 
-void constinit() {
+void constinit()
+{
   std::cout << "d = " << d << '\n';
   std::array<int, S::c> a1; // OK: S::c is a constant expression
 //  std::array<int, d> a2;  // error: d is not a constant expression
 }
 
 
-// --- zero initialization
+// --- zero initialization (since 98)
 
-void zeroinit () {
+void zeroinit ()
+{
   int a1;
   int a2();
   static int a3;
 }
 
 
-// --- value initalization
+// --- value initalization (since 03)
 
-struct S1 {
+struct S1
+{
   int i;
 };
 
-struct S2 {
+struct S2
+{
   int i;
   S2(){}
 };
 
 
-void valueinit () {
+void valueinit ()
+{
   std::cout << "int() = " << int() << std::endl;
   std::cout << "int{} = " << int{} << std::endl;
   std::cout << "S1().i = " << S1().i << std::endl;
-  std::cout << "S1().i = " << S2().i << std::endl;
+  std::cout << "S2().i = " << S2().i << std::endl;
 }
 
-// --- list initialization
+// --- list initialization (since 11)
 
 template <typename T>
-T passT (T t) {
+T passT (T t)
+{
   return t;
 }
 
-struct S3 {
+struct S3
+{
   int mem;
   std::string str{"default"};
   S3(int a, std::string s) : mem(a), str{s} {}
 };
 
-void listinit() {
+void listinit()
+{
   std::initializer_list<int> li = {1,2,3,4,5};
   li = passT<std::initializer_list<int>>({3,4,5});
   for (auto x: li)
@@ -119,14 +149,16 @@ void listinit() {
 }
 
 
-// --- aggregate initialization
+// --- aggregate initialization (since 11)
 
-struct AG {
+struct AG
+{
   int mem1;
   int mem2;
 };
 
-void aggreinit() {
+void aggreinit()
+{
   // narrowing conversion
 //  AG ag = {1, 2.0};
 //  int a1[]{1, 2.0};

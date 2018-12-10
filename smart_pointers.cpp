@@ -1,6 +1,6 @@
-#include "smart_pointers.h"
 #include <iostream>
 #include <memory>
+#include "smart_pointers.hpp"
 
 using std::cout;
 using std::endl;

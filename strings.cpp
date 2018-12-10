@@ -1,24 +1,21 @@
 #include <iostream>
 #include <string>
-//#include <locale>
-#include "strings.h"
+#include <locale>
+#include "strings.hpp"
 
 using std::string;
 using std::wstring;
 
-stringsTest::stringsTest()
+void testString()
 {
     wchar_t wc[] = L"Тексt на кирилиці";
     char     c[] =  "Тексt на кирилиці";
-    wstring s = L"Marry had a very little lamp.";
-//    string s1 = "Joe" + s.substr(s.find(" "), string::npos);
-
     std::wcout << wc << std::endl;
-//    std::wcout << *wc << std::endl;
+    std::cout << c << std::endl;
 
-//    std::cout << c << std::endl;
-//    std::cout << *c << std::endl;
-
+    wstring s = L"Marry had a very little lamp.";
+    wstring s1 = L"Joe" + s.substr(s.find(L" "), string::npos);
+    std::wcout << s1 << std::endl;
 
     std::cout << "s.size = " << s.size() << std::endl;
     std::cout << "s.length = " << s.length() << std::endl;

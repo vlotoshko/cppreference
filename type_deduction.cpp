@@ -1,6 +1,6 @@
-#include "type_deduction.h"
 #include <cstdlib>
 #include <iostream>
+#include "type_deduction.hpp"
 
 // --- C++1y - type deduction
 
@@ -40,14 +40,13 @@ auto autoTRTFunc(Container& c, Index i) -> decltype(c[i]) {
 
 // auto uses template type deduction
 template <typename Container, typename Index>
-auto autoTTDlFunc(Container& c, Index i) {
+auto autoTTDFunc(Container& c, Index i) {
     return c[i];
 }
 
 // decltype(auto) means type should be deducted but using decltype rules
 template <typename Container, typename Index>
-decltype(auto)
-retDeclFunc(Container& c, Index i) {
+decltype(auto) retDeclFunc(Container& c, Index i) {
     return c[i];
 }
 

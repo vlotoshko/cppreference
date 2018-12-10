@@ -2,10 +2,19 @@ cmake_minimum_required(VERSION 2.8.12)
 
 project(cppreference)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
+if(UNIX AND NOT APPLE)
+	set(LINUX TRUE)
+endif()
 
-#find_package(Qt5Core)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(LINKER_FLAGS "")
+if(LINUX)
+	set(LINKER_FLAGS ${LINKER_FLAGS}"-pthread")
+endif()
+
+set(CMAKE_EXE_LINKER_FLAGS ${LINKER_FLAGS})
 
 set(CPP_FILES
 	"main.cpp"
@@ -15,8 +24,27 @@ set(CPP_FILES
 	"smart_pointers.cpp"
 	"strings.cpp"
 	"type_deduction.cpp"
+	"move_semantics.cpp"
+	"multithreading.cpp"
+	"atomic.cpp"
+	"lambda.cpp"
+	"copy_elision.cpp"
 	)
 
-add_executable(${PROJECT_NAME} ${CPP_FILES})
+set(HPP_FILES
+	"atomic.hpp"
+	"copy_elision.h"
+	"initialization.hpp"
+	"lambda.hpp"
+	"move_semantics.hpp"
+	"multithreading.hpp"
+	"nvi_and_crtp.hpp"
+	"other.hpp"
+	"smart_pointers.hpp"
+	"strings.hpp"
+	"type_deduction.hpp"
+	)
 
-#target_link_libraries(${PROJECT_NAME} Qt5::Core)
+set(FILES ${CPP_FILES} ${HPP_FILES})
+
+add_executable(${PROJECT_NAME} ${FILES})

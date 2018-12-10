@@ -1,33 +1,20 @@
 #include <iostream>
-#include "initialization.h"
-#include "strings.h"
-#include "nvi_and_crtp.h"
-#include "type_deduction.h"
-#include "smart_pointers.h"
-#include "other.h"
 #include <array>
+
+#include "initialization.hpp"
+#include "strings.hpp"
+#include "nvi_and_crtp.hpp"
+#include "type_deduction.hpp"
+#include "smart_pointers.hpp"
+#include "other.hpp"
+#include "move_semantics.hpp"
+#include "lambda.hpp"
+#include "multithreading.hpp"
+#include "atomic.hpp"
+#include "copy_elision.h"
 
 using std::cout;
 using std::endl;
-
-
-int passRValue(int&& i) {
-    cout << i++ << endl;
-    cout << i << endl;
-
-    return 0;
-}
-
-void testRValue(){
-    passRValue(3 + 2);
-    passRValue(3);
-    int i = 1;
-    passRValue(std::move(i));
-
-    int a = 9;
-    int& la = a;
-    int&& ra = passRValue(7);
-}
 
 class TestNew
 {
@@ -42,7 +29,8 @@ void testNew()
     TestNew * n1 = new(buff) TestNew(45);
     TestNew * n5 = new(buff + 5) TestNew(51);
     n5 = buff;
-    for (int var = 0; var < 5; ++var) {
+    for (int var = 0; var < 5; ++var)
+    {
         n5++;
     }
     cout << n1->mInt << endl;
@@ -55,16 +43,47 @@ void testNew()
 
 int main()
 {
-  std::cout << "Hello World!" << std::endl;
-  testOther();
+
+  cout << "Hello World!" << endl;
+//  testAtomic();
+//  testMultiThreading();
+//  testLambda();
+//  testBinds();
+//  testMoveSemantics();
+//  testOther();
 //  testInitalization();
+//  testCopyElision();
 //  testNVI();
 //  testCRTP();
+//  testString();
 //  testTypeDeduction();
 //  testSmartPointers();
-
 //  testNew();
 //  testRValue();
+  testOneOfThreads();
 
   return 0;
 }
+
+
+/*
+ * ----- initialization -----------------
+ * C++1998
+ * default initialization
+ * zero initialization
+ *
+ * constant initialization
+ * direct initialization
+ * copy initialization
+ * reference initialization
+ *
+ * C++2003
+ * value initialization
+ *
+ * C++2011
+ * list initialization
+ * agregate initialization
+ *
+ *
+ *
+*/
