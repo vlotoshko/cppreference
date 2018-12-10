@@ -144,6 +144,8 @@ class GuardedThread : public std::thread
 {
 public:
     using std::thread::thread;
+    GuardedThread(GuardedThread&&) = default;
+    GuardedThread& operator=(GuardedThread&&) = default;
     GuardedThread(const GuardedThread&) = delete;
     GuardedThread& operator=(const GuardedThread&) = delete;
     ~GuardedThread() { if (joinable()) join(); }
@@ -177,8 +179,7 @@ void mutexTest()
     GuardedThread t9{CallAbleMutexTest{"scopped lock"}, repeat, scoped_lock_stub{}};
 
      std::vector<GuardedThread> producers;
-     // TODO: fix compilation error
-     // producers.emplace_back(GuardedThread{CallAbleMutexTest{"scopped lock"}, repeat, scoped_lock_stub{}});
+     producers.emplace_back(GuardedThread{CallAbleMutexTest{"scopped lock"}, repeat, scoped_lock_stub{}});
 }
 
 // t.get_id() == std::thread::id{} when thread was:
