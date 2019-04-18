@@ -1,5 +1,9 @@
 #include <iostream>
 #include <typeinfo>
+#include <list>
+#include <chrono>
+#include <map>
+#include <mutex>
 #include "other.hpp"
 
 using std::cout;
@@ -114,6 +118,7 @@ void derivedByValue(Derived d)
     d.show();
 }
 
+
 void testSlicing()
 {
     Base b;
@@ -158,11 +163,104 @@ void testUpcasting()
     delete bp;
 }
 
+/**
+ * @class TimeoutedCache
+ * @brief The TimeoutedCache template class caches element for some time period.
+ * @note Expired elemetnts are remain in cache, only considered as uncached.
+ * @tparam T type of element
+ * @tparam DurationType type of duration, seconds by default
+ */
+template <typename T, typename DurationType = std::chrono::seconds>
+struct TimeoutedCache
+{
+    /**
+     * @brief The TimeoutedCache constructor constructs empty cache.
+     * @param[in] expiresIn defines period of elements expiration
+     * @param[in] maxSize max size of the cache
+     */
+    TimeoutedCache(size_t expiresIn, size_t maxSize = 10)
+        : expirePeriod_(std::move(expiresIn)), maxSize_(std::move(maxSize)) {}
+
+    /**
+     * @brief Puts element into the cache.
+     * @param[in] element element
+     */
+    void put(T element)
+    {
+        std::lock_guard<std::mutex> guard(mutex_);
+        auto ret =
+                cache_.insert(std::pair<T, std::chrono::system_clock::time_point>(element, std::chrono::system_clock::now()));
+
+        if (ret.second == true) // element added into the map
+        {
+            orderedByTime_.push_back(std::move(element));
+            if (cache_.size() > maxSize_)
+            {
+                // delete the most expired element from the list
+                orderedByTime_.pop_front();
+            }
+        }
+        else // element updated in the map
+        {
+            // refresh - move element to to the end of the list
+            orderedByTime_.remove(element);
+            orderedByTime_.push_back(std::move(element));
+        }
+    }
+
+    /**
+     * @brief Check whether exists in the cache.
+     * @param[in] element element
+     * @return true if element exists in the cache and it is not expired.
+     */
+    bool exists(const T & element) const
+    {
+        std::lock_guard<std::mutex> guard(mutex_);
+        auto it = cache_.find(element);
+        if (it != cache_.end())
+        {
+            // item 'does not exist' if it was expired
+            return std::chrono::duration_cast<DurationType>
+                    (std::chrono::system_clock::now() - it->second).count() < expirePeriod_;
+        }
+        return false;
+    }
+private:
+    /// cache with elements and its time points
+    std::map<T, std::chrono::system_clock::time_point> cache_;
+
+    /// elements ordered by time, first is the oldest
+    std::list<T> orderedByTime_;
+
+    /// count of periods to expire an element
+    size_t expirePeriod_;
+
+    /// max size of the cache
+    size_t maxSize_;
+
+    mutable std::mutex mutex_;
+};
+
+
+void testTimeoutedCache()
+{
+    TimeoutedCache<size_t> lru(10, 1000);
+    lru.put(7);
+
+    // sleep fo more that 7 sceonds
+
+    // should return false if 7 seconds was passed
+    lru.exists(7);
+
+}
+
+
 void testOther()
 {
     testDeleted();
     testNonConstArgs();
     testSlicing();
     testUpcasting();
+    testTimeoutedCache();
     cout << endl;
 }
