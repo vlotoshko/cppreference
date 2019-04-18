@@ -1,1 +1,1 @@
-## For notes.
+This project is used for code snippets, notes, etc.
